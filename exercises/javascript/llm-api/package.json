@@ -1,0 +1,10 @@
+{
+  "name": "llm-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "@devlab/ai-client": "workspace:*",
+    "dotenv": "^17.4.1"
+  }
+}
