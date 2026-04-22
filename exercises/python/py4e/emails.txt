@@ -1,0 +1,83 @@
+From alice.newton@science.org Sat Jan  5 09:14:16 2024
+Subject: Sobre el experimento de gravedad
+From: Alice Newton <alice.newton@science.org>
+To: bob.curie@lab.net
+Date: Sat, 5 Jan 2024 09:14:16 -0500
+
+Hola Bob,
+
+He estado revisando los resultados del experimento sobre variaciones de gravedad.
+Los datos son prometedores, aunque hay algunas inconsistencias que debemos revisar.
+
+¿Podrías analizar la serie B nuevamente?
+
+Saludos,
+Alice
+
+
+From bob.curie@lab.net Sun Jan  6 11:22:10 2024
+Subject: Re: Sobre el experimento de gravedad
+From: Bob Curie <bob.curie@lab.net>
+To: alice.newton@science.org
+Date: Sun, 6 Jan 2024 11:22:10 -0500
+
+Hola Alice,
+
+Revisé la serie B y encontré un error en la calibración del sensor.
+Adjunto los nuevos resultados.
+
+Creo que ahora todo tiene más sentido.
+
+Saludos,
+Bob
+
+
+From clara.stage@theater.com Mon Jan  7 15:45:02 2024
+Subject: Ensayo general
+From: Clara Stage <clara.stage@theater.com>
+To: elenco@theater.com
+Date: Mon, 7 Jan 2024 15:45:02 -0500
+
+Querido elenco,
+
+El ensayo general será este miércoles a las 18:00.
+Por favor, lleguen puntuales y con vestuario completo.
+
+La obra está tomando una forma increíble.
+
+Nos vemos,
+Clara
+
+
+From david.writer@fiction.net Tue Jan  8 08:12:33 2024
+Subject: Nueva historia de ciencia ficción
+From: David Writer <david.writer@fiction.net>
+To: editor@fiction.net
+Date: Tue, 8 Jan 2024 08:12:33 -0500
+
+Hola,
+
+Estoy trabajando en una historia sobre viajes en el tiempo y paradojas.
+El protagonista descubre que sus acciones ya estaban predestinadas.
+
+Te enviaré el primer borrador pronto.
+
+Saludos,
+David
+
+
+From eva.quantum@physics.edu Wed Jan  9 19:30:55 2024
+Subject: Conferencia sobre mecánica cuántica
+From: Eva Quantum <eva.quantum@physics.edu>
+To: estudiantes@physics.edu
+Date: Wed, 9 Jan 2024 19:30:55 -0500
+
+Estimados estudiantes,
+
+Les recuerdo que mañana tendremos una conferencia sobre entrelazamiento cuántico.
+Será en el auditorio principal a las 10:00.
+
+No falten.
+
+Atentamente,
+Dra. Eva Quantum
