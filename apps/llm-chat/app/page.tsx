@@ -30,16 +30,20 @@ export default function Home() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  // TODO: Implementa scrollToBottom.
-  // Pista: usa messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  const scrollToBottom = () => {};
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  };
 
-  // TODO: Llama scrollToBottom cada vez que cambie messages o isLoading.
-  useEffect(() => {}, [messages, isLoading]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
 
-  // TODO: Ajusta la altura del textarea automáticamente cuando cambie input.
-  // Pista: resetea style.height a "auto" y luego aplica scrollHeight (máx 200px).
-  useEffect(() => {}, [input]);
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [input]);
 
   // TODO: Implementa el envío de mensajes de chat  →  POST /api/chat
   //
@@ -51,15 +55,83 @@ export default function Home() {
   //   5. Si data.error, agrega un mensaje de error del asistente.
   //      Si no, agrega data.message a messages[].
   //   6. En el bloque finally: isLoading = false, enfoca el textarea.
-  const sendMessage = async (e?: FormEvent) => {};
+  const sendMessage = async (e?: FormEvent) => {
+    if (e) e.preventDefault();
 
-  // TODO: Implementa el atajo de teclado.
-  // Pista: si key === "Enter" y !shiftKey → preventDefault y llama handleSubmit().
-  const handleKeyDown = (_e: KeyboardEvent<HTMLTextAreaElement>) => {};
+    const trimmedInput = input.trim();
 
-  // TODO: Implementa limpiar el chat.
-  // Pista: vacía messages[], limpia input y enfoca el textarea.
-  const clearChat = () => {};
+    if (!trimmedInput || isLoading) return;
+
+    const userMessage: Message = {
+      role: 'user',
+      content: trimmedInput,
+    }
+
+    const updatedMessages = [...messages, userMessage];
+
+    console.log("Enviando mensaje:", userMessage);
+    console.log("Mensajes enviados hasta ahora:", updatedMessages);
+
+    setMessages(updatedMessages);
+    setInput('');
+    setIsLoading(true);
+
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages, provider }),
+      })
+
+      const data = await res.json();
+
+      if (data.error) {
+        setMessages([
+          ...updatedMessages,
+          {
+            role: 'assistant',
+            content: `Error: ${data.error}`
+          }
+        ])
+      } else {
+        setMessages([
+          ...updatedMessages,
+          data.message
+        ])
+      }
+
+    } catch (error) {
+      setMessages([
+        ...updatedMessages,
+        {
+          role: 'assistant',
+          content: `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`
+        }
+      ])
+    } finally {
+      setIsLoading(false);
+      textareaRef.current?.focus();
+    }
+
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    setInput('');
+    textareaRef.current?.focus();
+  };
 
   // TODO: Implementa la generación de imágenes  →  POST /api/image
   //
@@ -81,9 +153,13 @@ export default function Home() {
   //   5. Agrega mensaje asistente con type: "audio" y audioUrl: url.
   const sendTTS = async () => {};
 
-  // TODO: Decide qué función llamar según el modo activo.
-  // Pista: mode === "chat" → sendMessage | "image" → generateImage | "tts" → sendTTS
-  const handleSubmit = async (_e?: FormEvent) => {};
+  
+  const handleSubmit = async (e?: FormEvent) => {
+    if (e) e.preventDefault();
+    if (mode === 'chat') sendMessage(e);
+    if (mode === 'image') generateImage();
+    if (mode === 'tts') sendTTS();
+  };
 
   // TODO: Implementa leer un mensaje en voz alta  →  POST /api/tts
   //
