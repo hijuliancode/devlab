@@ -216,14 +216,53 @@ export default function Home() {
     if (mode === 'tts') sendTTS();
   };
 
-  // TODO: Implementa leer un mensaje en voz alta  →  POST /api/tts
+  // DONE: Implementa leer un mensaje en voz alta  →  POST /api/tts
   //
   // Flujo:
   //   1. Si isSpeaking es true, retorna.
   //   2. fetch("POST /api/tts", body: { text })  →  Blob de audio.
   //   3. Crea un new Audio(url) y llama .play().
   //   4. En audio.onended: isSpeaking = false y revoca la URL con URL.revokeObjectURL.
-  const speakText = async (_text: string) => {};
+  const speakText = async (text: string) => {
+    if (isSpeaking) return;
+
+    setIsSpeaking(true)
+
+    try {
+
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { "Content-Type": 'application/json' },
+        body: JSON.stringify({ text })
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        console.error('TTS error:', data.error)
+        return;
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+
+      audio.onended = () => {
+        setIsSpeaking(false)
+        URL.revokeObjectURL(url)
+      }
+      audio.onerror = () => {
+        setIsSpeaking(false)
+        URL.revokeObjectURL(url)
+      }
+
+      audio.play()
+
+    } catch (err) {
+      console.error('TTS failed:', err)
+      setIsSpeaking(false)
+    }
+
+  };
 
   // DONE: Implementa la grabación de voz  →  POST /api/stt
   //
@@ -246,7 +285,6 @@ export default function Home() {
     }
 
     try {
-      console.log('mediaDevices ome:',await navigator.mediaDevices.enumerateDevices())
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const mediaRecorder = new MediaRecorder(stream)
 
