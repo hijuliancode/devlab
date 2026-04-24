@@ -69,9 +69,6 @@ export default function Home() {
 
     const updatedMessages = [...messages, userMessage];
 
-    console.log("Enviando mensaje:", userMessage);
-    console.log("Mensajes enviados hasta ahora:", updatedMessages);
-
     setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
@@ -93,10 +90,7 @@ export default function Home() {
       if (data.error) {
         setMessages([
           ...updatedMessages,
-          {
-            role: 'assistant',
-            content: `Error: ${data.error}`
-          }
+          { role: 'assistant', content: `Error: ${data.error}` }
         ])
       } else {
         setMessages([
@@ -192,7 +186,7 @@ export default function Home() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
               <Bot className="h-4.5 w-4.5 text-background" />
             </div>
-            <h1 className="text-lg font-semibold tracking-tight">otro-GPT</h1>
+            <h1 className="text-lg font-semibold tracking-tight">altas-GPT</h1>
           </div>
           <div className="flex items-center gap-2">
             <select
@@ -228,7 +222,7 @@ export default function Home() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold tracking-tight">
-                  Hola, soy otro-GPT
+                  Hola, soy altas-GPT
                 </h2>
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   {mode === "chat" && "Escribe un mensaje para comenzar la conversación."}
@@ -271,7 +265,7 @@ export default function Home() {
                           onClick={() => {
                             const link = document.createElement("a");
                             link.href = `data:image/png;base64,${msg.imageB64}`;
-                            link.download = `otro-gpt-${Date.now()}.png`;
+                            link.download = `altas-gpt-${Date.now()}.png`;
                             link.click();
                           }}
                           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -296,7 +290,7 @@ export default function Home() {
                         onClick={() => {
                           const link = document.createElement("a");
                           link.href = msg.audioUrl!;
-                          link.download = `otro-gpt-${Date.now()}.mp3`;
+                          link.download = `altas-gpt-${Date.now()}.mp3`;
                           link.click();
                         }}
                         className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
