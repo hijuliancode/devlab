@@ -2,7 +2,7 @@ export const MODELS = {
   openai: {
     chat: 'gpt-5.4-nano',
     stt: 'whisper-1', // gpt-4o-transcribe
-    images: 'gpt-image-2',
+    images: 'dall-e-3', // gpt-image-2
     tts: 'gpt-4o-mini-tts' // tts-1, tts-1-hd
   }
 }

@@ -127,7 +127,7 @@ export default function Home() {
     textareaRef.current?.focus();
   };
 
-  // TODO: Implementa la generación de imágenes  →  POST /api/image
+  // DONE: Implementa la generación de imágenes  →  POST /api/image
   //
   // Flujo:
   //   1. Valida input.trim().
@@ -135,7 +135,64 @@ export default function Home() {
   //   3. fetch("POST /api/image", body: { prompt })
   //   4. Si data.image.b64 existe, agrega mensaje asistente con
   //      type: "image" e imageB64: data.image.b64.
-  const generateImage = async () => {};
+  const generateImage = async () => {
+    const trimmed = input.trim()
+    if (!trimmed || isLoading) return;
+
+    const userMessage: Message = {
+      role: 'user',
+      content: trimmed,
+      type: 'image'
+    }
+
+    const updatedMessages = [ ...messages, userMessage ]
+    setMessages(updatedMessages)
+    setInput('')
+    setIsLoading(true)
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
+
+    try {
+      const res = await fetch('/api/image', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: trimmed })
+      })
+
+      const data = await res.json()
+
+      if (data.error) {
+        setMessages([
+          ...updatedMessages,
+          { role: 'assistant', content: `Error: ${data.error}` }
+        ])
+      } else if (data.image?.b64) {
+        setMessages([
+          ...updatedMessages,
+          {
+            role: 'assistant',
+            content: data.image.revisedPrompt || trimmed,
+            type: 'image',
+            imageB64: data.image.b64
+          }
+        ])
+      }
+
+    } catch (err) {
+      setMessages([
+        ...updatedMessages,
+        {
+          role: 'assistant',
+          content: 'Error: No se pudo generar la imagen.'
+        }
+      ])
+    } finally {
+      setIsLoading(false)
+    }
+
+  };
 
   // DONE: Implementa texto a audio  →  POST /api/tts
   //
