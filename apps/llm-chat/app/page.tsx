@@ -137,7 +137,7 @@ export default function Home() {
   //      type: "image" e imageB64: data.image.b64.
   const generateImage = async () => {};
 
-  // TODO: Implementa texto a audio  →  POST /api/tts
+  // DONE: Implementa texto a audio  →  POST /api/tts
   //
   // Flujo:
   //   1. Valida input.trim().
@@ -145,7 +145,68 @@ export default function Home() {
   //   3. fetch("POST /api/tts", body: { text })  →  la respuesta es un Blob de audio.
   //   4. Crea una URL temporal: URL.createObjectURL(blob).
   //   5. Agrega mensaje asistente con type: "audio" y audioUrl: url.
-  const sendTTS = async () => {};
+  const sendTTS = async () => {
+    const trimmed = input.trim()
+    if (!trimmed || isLoading) return;
+
+    const userMessage: Message = {
+      role: 'user',
+      content: trimmed,
+      type: 'audio'
+    }
+
+
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages)
+    setInput('')
+    setIsLoading(true)
+
+    if ( textareaRef.current ) {
+      textareaRef.current.style.height = 'auto'
+    }
+
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { "Content-Type": 'application/json' },
+        body: JSON.stringify({ text: trimmed })
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        setMessages([
+          ...updatedMessages,
+          { role: 'assistant', content: `Error: ${data.error}` }
+        ])
+        return;
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+
+      setMessages([
+        ...updatedMessages,
+        {
+          role: 'assistant',
+          content: trimmed,
+          type: 'audio',
+          audioUrl: url
+        }
+      ])
+
+    } catch (err) {
+      setMessages([
+        ...updatedMessages,
+        {
+          role: 'assistant',
+          content: 'Error: No se pudo generar el audio.'
+        }
+      ])
+    } finally {
+      setIsLoading(false)
+    }
+
+  };
 
   
   const handleSubmit = async (e?: FormEvent) => {

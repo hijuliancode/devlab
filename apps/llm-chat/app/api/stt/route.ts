@@ -20,7 +20,7 @@ import { MODELS } from '../../constants/models'
     }
 
     const transcription = await openai.audio.transcriptions.create({
-      model: MODELS.openai.audio,
+      model: MODELS.openai.stt,
       file: audioFile
     })
 
