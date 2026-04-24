@@ -45,7 +45,7 @@ export default function Home() {
     }
   }, [input]);
 
-  // TODO: Implementa el envío de mensajes de chat  →  POST /api/chat
+  // DONE: Implementa el envío de mensajes de chat  →  POST /api/chat
   //
   // Flujo:
   //   1. Lee y valida input.trim(). Si está vacío o isLoading, retorna.
@@ -164,7 +164,7 @@ export default function Home() {
   //   4. En audio.onended: isSpeaking = false y revoca la URL con URL.revokeObjectURL.
   const speakText = async (_text: string) => {};
 
-  // TODO: Implementa la grabación de voz  →  POST /api/stt
+  // DONE: Implementa la grabación de voz  →  POST /api/stt
   //
   // Flujo para iniciar:
   //   1. navigator.mediaDevices.getUserMedia({ audio: true })
@@ -175,7 +175,62 @@ export default function Home() {
   //
   // Flujo para detener:
   //   - mediaRecorderRef.current?.stop() y setIsRecording(false).
-  const toggleRecording = async () => {};
+  const toggleRecording = async () => {
+
+    if ( isRecording ) {
+      mediaRecorderRef.current?.stop()
+      setIsRecording(false)
+
+      return;
+    }
+
+    try {
+      console.log('mediaDevices ome:',await navigator.mediaDevices.enumerateDevices())
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+
+      mediaRecorderRef.current = mediaRecorder
+      chunksRef.current = []
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
+        stream.getTracks().forEach((t) => t.stop())
+
+        setIsLoading(true)
+
+        try {
+          const formData = new FormData()
+          formData.append('audio', blob, 'recording.webm')
+
+          const res = await fetch('/api/stt', { method: 'POST', body: formData })
+          const data = await res.json()
+
+          if (data.error) {
+            console.error('STT error: ', data.error)  
+          } else if (data.text) {
+            setInput((prev) => (prev ? `${prev} ${data.text}` : data.text ))
+          }
+
+        } catch(err) {
+          console.error('STT failed: ', err)
+        } finally {
+          setIsLoading(false)
+          textareaRef.current?.focus();
+        }
+
+      }
+
+      mediaRecorder.start();
+      setIsRecording(true)
+
+    } catch (err) {
+      console.error('Recording failed:', err)
+    }
+  };
 
   return (
     <div className="flex h-dvh flex-col bg-background">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { MODELS } from '../../constants/models';
 
 const openai = new OpenAI()
 
@@ -11,14 +12,12 @@ type Provider = 'openai'
 async function chatWithOpenAI(messages: Array<{ role: 'user' | 'assistant'; content: string }>) {
 
   const completion = await openai.chat.completions.create({
-    model: 'gpt-5.4-nano',
+    model: MODELS.openai.chat,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       ...messages
     ]
   })
-
-  console.log('AQUI VAMOS', completion.choices[0]?.message)
 
   return completion.choices[0]?.message
 }
