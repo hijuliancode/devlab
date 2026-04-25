@@ -7,7 +7,6 @@
     "@anthropic-ai/sdk": "^0.91.0",
     "@devlab/ai-client": "workspace:*",
     "@elevenlabs/elevenlabs-js": "^2.44.0",
-    "dotenv": "^17.4.1",
-    "stream": "^0.0.3"
+    "dotenv": "^17.4.1"
   }
 }
