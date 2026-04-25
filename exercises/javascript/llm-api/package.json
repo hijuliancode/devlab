@@ -6,6 +6,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.0",
     "@devlab/ai-client": "workspace:*",
-    "dotenv": "^17.4.1"
+    "@elevenlabs/elevenlabs-js": "^2.44.0",
+    "dotenv": "^17.4.1",
+    "stream": "^0.0.3"
   }
 }
