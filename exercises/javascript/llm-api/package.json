@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.91.0",
     "@devlab/ai-client": "workspace:*",
     "dotenv": "^17.4.1"
   }

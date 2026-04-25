@@ -11,6 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.91.0",
     "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.2.4",
     "lucide-react": "^1.8.0",
