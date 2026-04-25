@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 
 type MessageType = "text" | "image" | "audio";
 type Mode = "chat" | "image" | "tts";
-type Provider = "openai" | "anthropic";
+type Provider = "openai" | "anthropic" | "google";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -405,12 +405,13 @@ export default function Home() {
               onChange={(e) => {
                 const val = e.target.value as Provider;
                 setProvider(val);
-                if (val === "anthropic") setMode("chat");
+                if (val === "anthropic" || val === 'google') setMode("chat");
               }}
               className="rounded-lg border border-border bg-muted px-2.5 py-1.5 text-xs font-medium text-foreground focus:border-foreground/20 focus:outline-none"
             >
               <option value="openai">OpenAI</option>
               <option value="anthropic">Anthropic</option>
+              <option value="google">Google</option>
             </select>
             <button
               onClick={clearChat}

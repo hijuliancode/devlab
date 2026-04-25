@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { MODELS } from '../../constants/models';
+import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI } from '@google/genai';
 
 const openai = new OpenAI()
 const anthropic = new Anthropic()
+const google = new GoogleGenAI({})
 
 const SYSTEM_PROMPT = 
   'Eres atlas-GPT, un asistente útil. REGLA IMPORTANTE: Nunca generes imágenes en SVG, ASCII art, código de imagen, ni ningún otro formato visual basado en texto. Si el usuario pide una imagen, responde exactamente: "Para generar imgágenes, usa el botón de imagen (ícono 🖼️) en la esquina superior derecha. Ahí puedes describir lo que quieres y se generará con DALL-E 3 en formato PNG." No intentes dar alternativas ni workarounds para generar imágenes.';
 
-type Provider = 'openai' | 'anthropic'
+type Provider = 'openai' | 'anthropic' | 'google'
 
 type MessageType = {
   role: 'user' | 'assistant';
@@ -72,6 +74,48 @@ async function chatWithAnthropic(messages: MessageType[]) {
 
 }
 
+async function chatWithGoogle(messages: MessageType[]) {
+  console.log(messages)
+
+  // CLan simple
+  const cleanMessages = messages
+    .filter((m) => (m.role === 'user' || m.role === 'assistant') && m.content?.trim())
+    .map((m) => ({ role: m.role, content: m.content.trim() }))
+
+  if (cleanMessages.length === 0 || cleanMessages[0]?.role !== 'user') {
+    throw new Error('Conversation must start with a user message')
+  }
+
+  // Map to gemini format
+  const contents = cleanMessages.map((m) => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }))
+
+  // Gemini call
+  const response = await google.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents,
+    config: {
+      systemInstruction: SYSTEM_PROMPT
+    }
+  })
+
+  // Extract text robustrly
+  const text = 
+    response.text ??
+    response.candidates?.[0]?.content?.parts
+      ?.map((p: { text?: string }) => p.text)
+      .filter(Boolean)
+      .join('\n') ?? ''
+
+
+  return {
+    role: 'assistant' as const,
+    content: text,
+  }
+}
+
 export async function POST(req: NextRequest) {
 
   try {
@@ -84,12 +128,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const selectProvider: Provider = provider === 'anthropic' ? 'anthropic' : 'openai';
+    const selectProvider: Provider = 
+      provider === 'anthropic' ? 'anthropic' :
+      provider === 'google' ? 'google' :
+      'openai';
 
-    const reply =
-      selectProvider === 'anthropic'
-        ? await chatWithAnthropic(messages)
-        : await chatWithOpenAI(messages)
+    let reply =
+      selectProvider === 'anthropic' ? await chatWithAnthropic(messages) :
+      selectProvider === 'google' ? await chatWithGoogle(messages) : 
+      await chatWithOpenAI(messages);
 
     return NextResponse.json({ message: reply })
 
