@@ -16,6 +16,11 @@ interface Message {
   audioUrl?: string;
 }
 
+const API_CHAT_URL = {
+  chat: '/api/chat',
+  vercel_sdk: '/api/chat-vercel-sdk'
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -79,7 +84,7 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(API_CHAT_URL.vercel_sdk, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: updatedMessages, provider }),
