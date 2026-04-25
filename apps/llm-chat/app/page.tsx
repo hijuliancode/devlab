@@ -32,6 +32,7 @@ export default function Home() {
   const [provider, setProvider] = useState<Provider>("openai");
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isElevenLabsSpeaking, setIsElevenLabsSpeaking] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -326,6 +327,59 @@ export default function Home() {
 
   };
 
+  // DONE: Implementa leer un mensaje con ElevenLabs
+  //
+  // Agregar aquí tu integración con ElevenLabs
+  const speakWithElevenLabs = async (text: string) => {
+
+    // TODO: Implementa la lógica de ElevenLabs
+    // Estructura sugerida:
+    //   1. Si isElevenLabsSpeaking es true, retorna.
+    if (isElevenLabsSpeaking) return;
+    //   2. setIsElevenLabsSpeaking(true)
+    setIsElevenLabsSpeaking(true)
+
+    try {
+      //   3. fetch() a tu endpoint de ElevenLabs
+      const res = await fetch('/api/tts-elevenlabs', {
+        method: 'POST',
+        headers: { "Content-Type": 'application/json' },
+        body: JSON.stringify({ text })
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('Server error response:', text)
+        return;
+      }
+
+      //   4. Crea el audio y reproduce
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+
+      //   5. En audio.onended: setIsElevenLabsSpeaking(false)
+
+      audio.onended = () => {
+        setIsElevenLabsSpeaking(false)
+        URL.revokeObjectURL(url)
+      }
+
+      audio.onerror = () => {
+        setIsElevenLabsSpeaking(false)
+        URL.revokeObjectURL(url)
+      }
+
+      audio.play()
+      
+    } catch(err) {
+      console.error('ElevenLabs TTS failed:', err)
+      console.error('Error details:', JSON.stringify(err), err instanceof Error ? err.message : err)
+      setIsElevenLabsSpeaking(false)
+    }
+  
+  };
+
   // DONE: Implementa la grabación de voz  →  POST /api/stt
   //
   // Flujo para iniciar:
@@ -523,19 +577,34 @@ export default function Home() {
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                       </div>
                       {provider === "openai" && (
-                        <button
-                          onClick={() => speakText(msg.content)}
-                          disabled={isSpeaking}
-                          className="mt-1 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
-                          title="Escuchar respuesta"
-                        >
-                          {isSpeaking ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Volume2 className="h-3.5 w-3.5" />
-                          )}
-                          Escuchar
-                        </button>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          <button
+                            onClick={() => speakText(msg.content)}
+                            disabled={isSpeaking}
+                            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+                            title="Escuchar respuesta"
+                          >
+                            {isSpeaking ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Volume2 className="h-3.5 w-3.5" />
+                            )}
+                            Escuchar
+                          </button>
+                          <button
+                            onClick={() => speakWithElevenLabs(msg.content)}
+                            disabled={isElevenLabsSpeaking}
+                            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+                            title="Escuchar con ElevenLabs"
+                          >
+                            {isElevenLabsSpeaking ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Volume2 className="h-3.5 w-3.5" />
+                            )}
+                            ElevenLabs
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
