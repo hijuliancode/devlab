@@ -1,6 +1,0 @@
-[project]
-name = "py4e"
-version = "0.1.0"
-description = "Exercises for Python for Everybody (py4e)"
-requires-python = ">=3.14"
-dependencies = []
