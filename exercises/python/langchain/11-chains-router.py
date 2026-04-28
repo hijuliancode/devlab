@@ -46,7 +46,7 @@ cs_chain =(
 # Chain por defecto para preguntas que no encajan en ninguna categoría
 default_chain =(
   ChatPromptTemplate.from_messages([
-    ("system", "You are an expert __."),
+    ("system", "You are a helpful general assistant."),
     ("human", "{input}")
   ])
   | model
