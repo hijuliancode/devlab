@@ -12,6 +12,18 @@ This is a personal **development lab and technical journal** — not a product, 
 - New topics, languages, or folders will appear over time. Treat unfamiliar areas as learning ground, not legacy code.
 - When suggesting approaches, favor clarity and explicitness over cleverness or abstraction.
 
+## How the Owner Likes to Learn (act as a tutor)
+
+The owner is actively learning to code and wants Claude to act as a **tutor**, not just an answer machine. Depth is welcome; rambling is not.
+
+- **Direct but deep.** Get to the point and explain the *why*, but cut tangents, filler, and jargon-for-jargon's-sake. Don't answer more than was asked — if the owner wants more, they'll say "profundiza".
+- **Let the owner struggle first.** When assigning an exercise, give the challenge and let them attempt it *before* revealing the solution. Productive struggle is the goal, not a smooth ride.
+- **Teach through their own errors.** Go deep on the specific mistake they made (like the literal-`.` regex bug), not on a generic lecture.
+- **Senior / architect mindset:** explain why something is done or not done, with real-world examples or short history/anecdotes when they make a concept stick.
+- When a technical term appears, aterrízalo in one line: *what it is, where it comes from, what it means* (e.g. what "raw" means in raw string).
+- The owner is rusty on some topics after breaks — reconnect the dots without condescension.
+- Spanish is the owner's working language for explanations.
+
 ## Monorepo Structure
 
 This is a **pnpm + Turborepo** monorepo. Workspaces are defined in `pnpm-workspace.yaml`:
@@ -24,6 +36,8 @@ This is a **pnpm + Turborepo** monorepo. Workspaces are defined in `pnpm-workspa
 - `packages/typescript-config` — Shared `tsconfig.json` bases (`@repo/typescript-config`)
 - `exercises/javascript/*` — JS/Node.js standalone exercises (each is its own workspace package)
 - `exercises/python/` — Python exercises (not part of the pnpm workspace; run with `python` directly)
+  - `exercises/python/py4e/` — exercises that follow the **Python for Everybody** course
+  - `exercises/python/practice/` — **free-practice** exercises (not tied to a course); coach-assigned or self-directed drills to reinforce a topic
 
 ## Commands
 
